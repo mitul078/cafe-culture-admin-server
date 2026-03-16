@@ -44,7 +44,7 @@ const signinController = async (req, res) => {
 
 const signupController = async (req, res) => {
     try {
-        const { email, password, role, username, phone, cafeName, address, subscriptionDetail } = req.body;
+        const { email, password, role, username } = req.body;
 
         // For ADMIN role, password is optional (will be generated)
         const signupData = { email, role };
@@ -62,20 +62,11 @@ const signupController = async (req, res) => {
             });
         }
 
-        // Prepare additional data for ADMIN role
-        const additionalData = {};
-        if (role === 'ADMIN') {
-            additionalData.username = username;
-            additionalData.phone = phone;
-            additionalData.cafeName = cafeName;
-            additionalData.address = address;
-            if (subscriptionDetail) {
-                additionalData.subscriptionDetail = subscriptionDetail;
-            }
-        }
+
+
 
         // Call service
-        const result = await signup(email, password, role, additionalData);
+        const result = await signup(email, password, role, username);
 
         // Return success response
         res.status(201).json({

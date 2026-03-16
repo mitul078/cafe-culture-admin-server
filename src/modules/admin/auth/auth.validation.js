@@ -36,18 +36,6 @@ const validateSignup = (data) => {
         if (!data.username || typeof data.username !== 'string' || data.username.trim().length < 3) {
             errors.push('Username is required and must be at least 3 characters long');
         }
-
-        if (!data.phone || typeof data.phone !== 'string' || !/^\d{10}$/.test(data.phone)) {
-            errors.push('Valid 10-digit phone number is required');
-        }
-
-        if (!data.cafeName || typeof data.cafeName !== 'string' || data.cafeName.trim().length < 2) {
-            errors.push('Cafe name is required and must be at least 2 characters long');
-        }
-
-        if (!data.address || typeof data.address !== 'string' || data.address.trim().length < 5) {
-            errors.push('Address is required and must be at least 5 characters long');
-        }
     }
 
     return {

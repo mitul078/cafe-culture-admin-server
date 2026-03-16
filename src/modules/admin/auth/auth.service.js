@@ -40,7 +40,7 @@ const signin = async (email, password) => {
     }
 };
 
-const signup = async (email, password, role = 'ADMIN', additionalData = {}) => {
+const signup = async (email, password, role = 'ADMIN', username) => {
     try {
         // Check if admin already exists
         const existingAdmin = await Admin.findOne({ email });
@@ -49,8 +49,8 @@ const signup = async (email, password, role = 'ADMIN', additionalData = {}) => {
         }
 
         // If role is ADMIN, check username uniqueness
-        if (role === 'ADMIN' && additionalData.username) {
-            const existingUsername = await Admin.findOne({ username: additionalData.username });
+        if (role === 'ADMIN' && username) {
+            const existingUsername = await Admin.findOne({ username });
             if (existingUsername) {
                 throw new Error('Admin with this username already exists');
             }
@@ -71,7 +71,7 @@ const signup = async (email, password, role = 'ADMIN', additionalData = {}) => {
             email,
             password: hashedPassword,
             role,
-            ...additionalData
+            username
         });
 
         await newAdmin.save();
@@ -82,11 +82,6 @@ const signup = async (email, password, role = 'ADMIN', additionalData = {}) => {
             role: newAdmin.role,
             ...(role === 'ADMIN' && {
                 username: newAdmin.username,
-                phone: newAdmin.phone,
-                cafeName: newAdmin.cafeName,
-                address: newAdmin.address,
-                isActive: newAdmin.isActive,
-                subscriptionDetail: newAdmin.subscriptionDetail,
                 generatedPassword: finalPassword // Return the generated password for ADMIN
             })
         };

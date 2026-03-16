@@ -10,6 +10,9 @@ app.use(cookieParser())
 const authRoutes = require('./modules/admin/auth/auth.route');
 app.use('/api/v1/admin/auth', authRoutes);
 
+const superAdminClientRoutes = require('./modules/super-admin/clients/client.route');
+app.use('/api/v1/super-admin/clients', superAdminClientRoutes);
+
 // Error handling middleware
 const { errorHandler } = require('./middlewares/error.middleware');
 app.use(errorHandler);

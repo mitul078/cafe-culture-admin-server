@@ -11,7 +11,7 @@ const clientSchema = new mongoose.Schema({
         maxQr: { type: Number, min: 1, default: 1 },
         tableType: { type: String, enum: ["A", "1"], default: "1" },
         plan: { type: String, default: "" },
-        startingDate: { type: Date, required: true },
+        startingDate: { type: Date, required: true , default: Date.now },
         endingDate: { type: Date, required: true },
         dueDate: { type: Date, required: true },
         paymentMethod: { type: String, enum: ["UPI", "CASH", "CHECK"], default: "CASH" },

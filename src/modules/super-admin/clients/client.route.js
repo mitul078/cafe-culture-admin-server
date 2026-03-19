@@ -7,6 +7,6 @@ const { createClientController } = require('./client.controller');
 const router = express.Router();
 
 
-router.post("/create", authenticate, authorize(["SUPER_ADMIN"]), createClientController)
+router.post("/client/create", authenticate, authorize("SUPER_ADMIN"), createClientController)
 
 module.exports = router;

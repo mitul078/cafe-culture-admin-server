@@ -4,9 +4,9 @@ const Client = require("./client.model")
 exports.createClientController = async (req, res, next) => {
     try {
 
-        const { adminId, cafeName, startingDate, paymentMethod, address, maxQr, tableType } = req.body
+        const { adminId, cafeName, paymentMethod, address, maxQr, tableType } = req.body
 
-        if (!adminId || !cafeName || !address) {
+        if (!adminId || !cafeName || !address || !maxQr || !tableType) {
             throw new Error("Required fields missing")
         }
 
@@ -16,7 +16,7 @@ exports.createClientController = async (req, res, next) => {
             throw new Error("ADMIN ALREADY EXIST")
         }
 
-        const start = new Date(startingDate)
+        const start = new Date()
         if (isNaN(start.getTime())) {
             throw new Error("INVALID STARTING DATE")
         }

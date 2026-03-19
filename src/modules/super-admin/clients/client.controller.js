@@ -1,4 +1,3 @@
-const { successResponse } = require("../../../middlewares/success.middleware")
 const Client = require("./client.model")
 
 exports.createClientController = async (req, res, next) => {
@@ -58,7 +57,11 @@ For any assistance, please contact the support team.
             }
         })
 
-        successResponse(res, "CLIENT CREATED SUCCESSFULLY", createClient);
+        res.status(201).json({
+            success: true,
+            message: "CLIENT CREATED SUCCESSFULLY",
+            data: createClient
+        })
 
     } catch (error) {
         next(error)

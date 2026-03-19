@@ -10,8 +10,14 @@ app.use(cookieParser())
 const authRoutes = require('./modules/admin/auth/auth.route');
 app.use('/api/v1/admin', authRoutes);
 
+const categoryRoutes = require('./modules/admin/menu/category/category.route');
+app.use('/api/v1/admin', categoryRoutes);
+
 const superAdminClientRoutes = require('./modules/super-admin/clients/client.route');
 app.use('/api/v1/super-admin', superAdminClientRoutes);
+
+const superAdminAuthRoutes = require('./modules/super-admin/auth/signup.route');
+app.use('/api/v1/super-admin', superAdminAuthRoutes);
 
 
 

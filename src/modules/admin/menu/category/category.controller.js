@@ -1,23 +1,25 @@
 const Category = require("./category.model")
+const { validateCreateCategory, validateUpdateCategory } = require("./category.validation")
 
 exports.createCategory = async (req, res, next) => {
     try {
         const adminId = req.admin.id
         let { categoryName, order } = req.body
 
-        if (typeof categoryName !== "string" || categoryName.trim() === "") {
-            throw new Error("Invalid category name")
-        }
-
-        if (typeof order !== "number" || order < 0) {
-            throw new Error("Invalid order value")
+        const validation = validateCreateCategory({ categoryName, order })
+        if (!validation.isValid) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: validation.errors
+            })
         }
 
         categoryName = categoryName.trim()
 
         // Duplicate check
         const existing = await Category.findOne({ adminId, categoryName })
-        if (existing) throw new Error("Category already exists")
+        if (existing) return res.status(400).json({ success: false, message: 'Category already exists' })
 
         // 🔥 SHIFT ORDERS
         await Category.updateMany(
@@ -51,8 +53,17 @@ exports.updateCategory = async (req, res, next) => {
         const categoryId = req.params.id
         let { categoryName, order } = req.body
 
+        const validation = validateUpdateCategory({ categoryName, order })
+        if (!validation.isValid) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: validation.errors
+            })
+        }
+
         const category = await Category.findOne({ _id: categoryId, adminId })
-        if (!category) throw new Error("Category not found")
+        if (!category) return res.status(404).json({ success: false, message: 'Category not found' })
 
         const oldOrder = category.order
 
@@ -64,13 +75,14 @@ exports.updateCategory = async (req, res, next) => {
 
             categoryName = categoryName.trim()
 
+
             const existing = await Category.findOne({
                 adminId,
                 categoryName,
                 _id: { $ne: categoryId }
             })
 
-            if (existing) throw new Error("Category already exists")
+            if (existing) return res.status(400).json({ success: false, message: 'Category already exists' })
 
             category.categoryName = categoryName
         }
@@ -127,7 +139,7 @@ exports.deleteCategory = async (req, res, next) => {
         const categoryId = req.params.id
 
         const category = await Category.findOne({ _id: categoryId, adminId })
-        if (!category) throw new Error("Category not found")
+        if (!category) return res.status(404).json({ success: false, message: 'Category not found' })
 
         const deletedOrder = category.order
 

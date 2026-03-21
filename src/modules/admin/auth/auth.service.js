@@ -12,7 +12,8 @@ const signin = async (email, password) => {
     const payload = {
         id: admin._id,
         email: admin.email,
-        role: admin.role
+        role: admin.role,
+        name: admin.name
     };
 
     // ✅ Access Token (short life)

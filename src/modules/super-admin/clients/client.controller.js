@@ -1,5 +1,5 @@
 const Client = require("./client.model")
-
+const Admin = require("../../admin/auth/auth.model")
 exports.createClientController = async (req, res, next) => {
     try {
 
@@ -9,10 +9,19 @@ exports.createClientController = async (req, res, next) => {
             throw new Error("Required fields missing")
         }
 
-        const findAdmin = await Client.findOne({ adminId });
 
-        if (findAdmin) {
-            throw new Error("ADMIN ALREADY EXIST")
+        const findAdmin = await Admin.findOne({ adminId });
+
+        if (!findAdmin) {
+            throw new Error("ADMIN NOT FOUND - PLEASE SIGNUP FIRST");
+        }
+
+
+        // ✅ Prevent duplicate client for same admin
+        const existingClient = await Client.findOne({ adminId });
+
+        if (existingClient) {
+            throw new Error("CLIENT ALREADY EXISTS FOR THIS ADMIN");
         }
 
         const start = new Date()

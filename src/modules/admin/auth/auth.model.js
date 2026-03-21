@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 
 const adminSchema = new mongoose.Schema({
+    adminId: { type: String,  unique:true },
     email: { type: String, required: true, unique: true, index: true },
     password: { type: String, required: true, select: false },
     role: { type: String, enum: ['SUPER_ADMIN', 'ADMIN', 'CUSTOMER'], default: 'ADMIN' },

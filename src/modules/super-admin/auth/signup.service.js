@@ -1,20 +1,15 @@
 const Admin = require('../../admin/auth/auth.model');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-const generateRandomPassword = () => {
-    return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-};
+const generateSnowflakeId = require('../../../utils/snowflake');
+const generateSecurePassword = require('../../../utils/generatePassword');
 
 const signup = async (email, password, role = 'ADMIN', username) => {
     try {
-        // Check if admin already exists
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) {
             throw new Error('Admin with this email already exists');
         }
 
-        // If role is ADMIN, check username uniqueness
         if (role === 'ADMIN' && username) {
             const existingUsername = await Admin.findOne({ username });
             if (existingUsername) {
@@ -22,18 +17,16 @@ const signup = async (email, password, role = 'ADMIN', username) => {
             }
         }
 
-        // Generate password if not provided for ADMIN
         let finalPassword = password;
         if (role === 'ADMIN' && !password) {
-            finalPassword = generateRandomPassword();
+            finalPassword = generateSecurePassword();
         }
 
-        // Hash password
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(finalPassword, saltRounds);
+        const hashedPassword = await bcrypt.hash(finalPassword, 10);
 
-        // Create new admin
+        const adminId = generateSnowflakeId();
         const newAdmin = new Admin({
+            adminId, // 👈 use snowflake here
             email,
             password: hashedPassword,
             role,
@@ -43,14 +36,15 @@ const signup = async (email, password, role = 'ADMIN', username) => {
         await newAdmin.save();
 
         return {
-            id: newAdmin._id,
+            id: newAdmin.adminId,
             email: newAdmin.email,
             role: newAdmin.role,
             ...(role === 'ADMIN' && {
                 username: newAdmin.username,
-                generatedPassword: finalPassword // Return the generated password for ADMIN
+                generatedPassword: finalPassword
             })
         };
+
     } catch (error) {
         throw error;
     }

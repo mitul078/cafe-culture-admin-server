@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const generateSnowflakeId = require('../../../utils/snowflake');
 const generateSecurePassword = require('../../../utils/generatePassword');
 
-const signup = async (email, password, role = 'ADMIN', username) => {
+const signup = async (email, password, role = 'ADMIN', username, name) => {
     try {
         const existingAdmin = await Admin.findOne({ email });
         if (existingAdmin) {
@@ -30,7 +30,8 @@ const signup = async (email, password, role = 'ADMIN', username) => {
             email,
             password: hashedPassword,
             role,
-            username
+            username,
+            name
         });
 
         await newAdmin.save();
@@ -39,10 +40,10 @@ const signup = async (email, password, role = 'ADMIN', username) => {
             id: newAdmin.adminId,
             email: newAdmin.email,
             role: newAdmin.role,
-            ...(role === 'ADMIN' && {
-                username: newAdmin.username,
-                generatedPassword: finalPassword
-            })
+            username: newAdmin.username,
+            generatedPassword: finalPassword,
+            name: newAdmin.name
+
         };
 
     } catch (error) {

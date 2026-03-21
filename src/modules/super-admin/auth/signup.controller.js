@@ -3,7 +3,7 @@ const { signup } = require('./signup.service');
 
 const signupController = async (req, res) => {
     try {
-        const { email, password, role, username } = req.body;
+        const { email, password, role, username, name } = req.body;
 
         // For ADMIN role, password is optional (will be generated)
         const signupData = { email, role };
@@ -23,7 +23,7 @@ const signupController = async (req, res) => {
 
 
         // Call service
-        const result = await signup(email, password, role, username);
+        const result = await signup(email, password, role, username, name);
 
         // Return success response
         res.status(201).json({

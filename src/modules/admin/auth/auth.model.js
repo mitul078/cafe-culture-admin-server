@@ -7,6 +7,8 @@ const adminSchema = new mongoose.Schema({
 
     password: { type: String, required: true, select: false },
 
+    name: { type: String },
+
     role: {
         type: String,
         enum: ['SUPER_ADMIN', 'ADMIN'],

@@ -40,6 +40,12 @@ const signin = async (email, password) => {
     };
 };
 
+const signout = async (adminId) => {
+    if (!adminId) return;
+    await Admin.findByIdAndUpdate(adminId, { refreshToken: null });
+};
+
 module.exports = {
-    signin
+    signin,
+    signout
 };

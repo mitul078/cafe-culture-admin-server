@@ -4,6 +4,7 @@ const categorySchema = new mongoose.Schema({
     categoryName: { type: String, required: true },
     order: { type: Number, min: 0 },
     isActive: { type: Boolean, default: true },
+    color: { type: String }
 }, { timestamps: true })
 
 

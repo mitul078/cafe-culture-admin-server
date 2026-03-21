@@ -1,11 +1,13 @@
 const validateSignin = (data) => {
     const errors = [];
 
-    if (!data.email || typeof data.email !== 'string' || !data.email.includes('@')) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!data.email || !emailRegex.test(data.email)) {
         errors.push('Valid email is required');
     }
 
-    if (!data.password || typeof data.password !== 'string' || data.password.length < 6) {
+    if (!data.password || data.password.length < 6) {
         errors.push('Password must be at least 6 characters long');
     }
 

@@ -1,10 +1,16 @@
 const cookieParser = require("cookie-parser")
 const express = require("express")
 const app = express()
+const cors = require("cors")
 
 app.use(express.json())
 
 app.use(cookieParser())
+
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}))
 
 // Routes
 const authRoutes = require('./modules/admin/auth/auth.route');

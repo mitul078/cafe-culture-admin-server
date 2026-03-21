@@ -5,7 +5,6 @@ const signinController = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validate input
         const validation = validateSignin({ email, password });
         if (!validation.isValid) {
             return res.status(400).json({
@@ -15,25 +14,29 @@ const signinController = async (req, res) => {
             });
         }
 
-        // Call service
         const result = await signin(email, password);
 
-        // Set token cookie
-        const cookieOptions = {
+        res.cookie('accessToken', result.accessToken, {
             httpOnly: true,
-            sameSite: 'lax'
-        };
-        if (process.env.NODE_ENV === 'production') {
-            cookieOptions.secure = true;
-        }
-        res.cookie('token', result.token, cookieOptions);
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 15 * 60 * 1000 // 15 min
+        });
 
-        // Return success response
+        res.cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        // ❌ REMOVE token from response
         res.status(200).json({
             success: true,
             message: 'Signin successful',
-            data: result
+            admin: result.admin
         });
+
     } catch (error) {
         res.status(401).json({
             success: false,

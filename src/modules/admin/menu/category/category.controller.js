@@ -4,7 +4,7 @@ const { validateCreateCategory, validateUpdateCategory } = require("./category.v
 exports.createCategory = async (req, res, next) => {
     try {
         const adminId = req.admin.id
-        let { categoryName, order } = req.body
+        let { categoryName, order, color } = req.body
 
         const validation = validateCreateCategory({ categoryName, order })
         if (!validation.isValid) {
@@ -30,7 +30,8 @@ exports.createCategory = async (req, res, next) => {
         const category = await Category.create({
             categoryName,
             order,
-            adminId
+            adminId,
+            color
         })
 
         res.status(201).json({
@@ -38,7 +39,8 @@ exports.createCategory = async (req, res, next) => {
             data: {
                 id: category._id,
                 categoryName,
-                order
+                order,
+                color
             }
         })
 

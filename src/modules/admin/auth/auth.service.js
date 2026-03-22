@@ -10,10 +10,11 @@ const signin = async (email, password) => {
     if (!isPasswordValid) throw new Error('Invalid email or password');
 
     const payload = {
-        id: admin._id,
         email: admin.email,
         role: admin.role,
-        name: admin.name
+        name: admin.name,
+        id: admin.adminId,
+        _id: admin._id
     };
 
     // ✅ Access Token (short life)

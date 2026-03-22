@@ -30,6 +30,16 @@ const validateUpdateCategory = (data) => {
         }
     }
 
+    if (data.isActive !== undefined && typeof data.isActive !== 'boolean') {
+        errors.push('isActive must be a boolean');
+    }
+
+    if (data.color !== undefined) {
+        if (typeof data.color !== 'string' || data.color.trim() === '') {
+            errors.push('color must be a non-empty string');
+        }
+    }
+
     return {
         isValid: errors.length === 0,
         errors

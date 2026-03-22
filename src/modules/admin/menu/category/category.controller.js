@@ -40,7 +40,9 @@ exports.createCategory = async (req, res, next) => {
                 id: category._id,
                 categoryName,
                 order,
-                color
+                color,
+                isActive: category.isActive,
+                totalItem: category.totalItem
             }
         })
 
@@ -53,9 +55,9 @@ exports.updateCategory = async (req, res, next) => {
     try {
         const adminId = req.admin.id
         const categoryId = req.params.id
-        let { categoryName, order } = req.body
+        let { categoryName, order, isActive, color } = req.body
 
-        const validation = validateUpdateCategory({ categoryName, order })
+        const validation = validateUpdateCategory({ categoryName, order, isActive, color })
         if (!validation.isValid) {
             return res.status(400).json({
                 success: false,
@@ -119,6 +121,14 @@ exports.updateCategory = async (req, res, next) => {
             category.order = order
         }
 
+        if (isActive !== undefined) {
+            category.isActive = isActive
+        }
+
+        if (color !== undefined) {
+            category.color = color
+        }
+
         await category.save()
 
         res.status(200).json({
@@ -126,7 +136,10 @@ exports.updateCategory = async (req, res, next) => {
             data: {
                 id: category._id,
                 categoryName: category.categoryName,
-                order: category.order
+                order: category.order,
+                color: category.color,
+                isActive: category.isActive,
+                totalItem: category.totalItem
             }
         })
 
@@ -167,17 +180,17 @@ exports.getCategories = async (req, res, next) => {
     try {
         const adminId = req.admin.id
 
-        const categories = await Category.find({
-            adminId,
-            isActive: true
-        }).sort({ order: 1 })
+        const categories = await Category.find({ adminId }).sort({ order: 1 })
 
         res.status(200).json({
             success: true,
             data: categories.map(cat => ({
                 id: cat._id,
                 categoryName: cat.categoryName,
-                order: cat.order
+                order: cat.order,
+                color: cat.color,
+                isActive: cat.isActive,
+                totalItem: cat.totalItem
             }))
         })
 

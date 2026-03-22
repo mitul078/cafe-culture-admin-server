@@ -115,3 +115,19 @@ test('update name and order moves correctly', async () => {
     const final = await request(app).get('/menu/category/get')
     expect(final.body.data.map(d => d.categoryName)).toEqual(['Second', 'One'])
 })
+
+test('update isActive and list includes inactive categories', async () => {
+    const c = await request(app).post('/menu/category/create').send({ categoryName: 'Hidden', order: 0 })
+    expect(c.status).toBe(201)
+    const id = c.body.data.id
+
+    const off = await request(app).patch(`/menu/category/update/${id}`).send({ isActive: false })
+    expect(off.status).toBe(200)
+    expect(off.body.data.isActive).toBe(false)
+
+    const list = await request(app).get('/menu/category/get')
+    expect(list.status).toBe(200)
+    const row = list.body.data.find((d) => d.categoryName === 'Hidden')
+    expect(row).toBeDefined()
+    expect(row.isActive).toBe(false)
+})

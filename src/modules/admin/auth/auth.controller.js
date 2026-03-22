@@ -56,7 +56,7 @@ const signoutController = async (req, res) => {
     try {
         const isProduction = process.env.NODE_ENV === "production";
 
-        await signout(req.admin?.id);
+        await signout(req.admin?._id);
 
         res.clearCookie('accessToken', {
             httpOnly: true,

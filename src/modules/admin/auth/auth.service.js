@@ -14,7 +14,8 @@ const signin = async (email, password) => {
         role: admin.role,
         name: admin.name,
         id: admin.adminId,
-        _id: admin._id
+        _id: admin._id,
+        username: admin.username
     };
 
     // ✅ Access Token (short life)

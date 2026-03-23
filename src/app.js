@@ -19,6 +19,9 @@ app.use('/api/v1/admin', authRoutes);
 const categoryRoutes = require('./modules/admin/menu/category/category.route');
 app.use('/api/v1/admin', categoryRoutes);
 
+const itemRoutes = require('./modules/admin/menu/items/item.route');
+app.use('/api/v1/admin', itemRoutes);
+
 const superAdminClientRoutes = require('./modules/super-admin/clients/client.route');
 app.use('/api/v1/super-admin', superAdminClientRoutes);
 

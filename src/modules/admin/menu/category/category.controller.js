@@ -1,4 +1,5 @@
 const Category = require("./category.model")
+const MenuItem = require("../items/item.model")
 const { validateCreateCategory, validateUpdateCategory } = require("./category.validation")
 
 exports.createCategory = async (req, res, next) => {
@@ -194,6 +195,52 @@ exports.getCategories = async (req, res, next) => {
             }))
         })
 
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.getCategoriesWithTotalItems = async (req, res, next) => {
+    try {
+        const adminId = req.admin.id
+
+        const [categories, itemCounts] = await Promise.all([
+            Category.find({ adminId }).sort({ order: 1 }),
+            MenuItem.aggregate([
+                {
+                    $match: {
+                        adminId,
+                        isDeleted: false
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$categoryId",
+                        totalItems: { $sum: 1 }
+                    }
+                }
+            ])
+        ])
+
+        const countByCategoryId = new Map(
+            itemCounts.map((entry) => [String(entry._id), entry.totalItems])
+        )
+
+        res.status(200).json({
+            success: true,
+            data: categories.map((cat) => {
+                const totalItems = countByCategoryId.get(String(cat._id)) || 0
+                return {
+                    id: cat._id,
+                    categoryName: cat.categoryName,
+                    order: cat.order,
+                    color: cat.color,
+                    isActive: cat.isActive,
+                    totalItem: totalItems,
+                    totalItems
+                }
+            })
+        })
     } catch (error) {
         next(error)
     }

@@ -4,13 +4,14 @@ const { authenticate } = require("../../../../middlewares/auth.middleware")
 
 const { authorize } = require("../../../../middlewares/role.middleware")
 
-const { createCategory, getCategories, updateCategory, deleteCategory } = require("./category.controller")
+const { createCategory, getCategories, getCategoriesWithTotalItems, updateCategory, deleteCategory } = require("./category.controller")
 
 const router = express.Router()
 
 router.post("/menu/category/create", authenticate, authorize("ADMIN"), createCategory)
 
 router.get("/menu/category/get", authenticate, authorize("ADMIN"), getCategories)
+router.get("/menu/category/get-with-total-items", authenticate, authorize("ADMIN"), getCategoriesWithTotalItems)
 
 router.patch("/menu/category/update/:id", authenticate, authorize("ADMIN"), updateCategory)
 

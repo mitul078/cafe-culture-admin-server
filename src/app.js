@@ -19,6 +19,9 @@ app.use('/api/v1/admin', authRoutes);
 const categoryRoutes = require('./modules/admin/menu/category/category.route');
 app.use('/api/v1/admin', categoryRoutes);
 
+const tagRoutes = require('./modules/admin/menu/tags/tag.route');
+app.use('/api/v1/admin', tagRoutes);
+
 const itemRoutes = require('./modules/admin/menu/items/item.route');
 app.use('/api/v1/admin', itemRoutes);
 

@@ -65,6 +65,7 @@ const menuItemSchema = new mongoose.Schema(
 
         slug: {
             type: String,
+            required: true,
             lowercase: true,
             unique: true,
             index: true,

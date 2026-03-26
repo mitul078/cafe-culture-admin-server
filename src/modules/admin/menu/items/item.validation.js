@@ -280,21 +280,19 @@ const validateGetItems = (query) => {
             }
         }
 
-        if (errors.length === 0) {
-            if (!Array.isArray(parsed)) {
-                errors.push("tags must be an array of strings");
-            } else {
-                const normalizedTags = parsed
-                    .filter((t) => typeof t === "string")
-                    .map((t) => t.trim())
-                    .filter(Boolean);
+        if (!Array.isArray(parsed)) {
+            errors.push("tags must be an array of strings");
+        } else {
+            const normalizedTags = parsed
+                .filter((t) => typeof t === "string")
+                .map((t) => t.trim())
+                .filter(Boolean);
 
-                if (normalizedTags.length === 0 && parsed.length > 0) {
-                    errors.push("tags must contain non-empty strings");
-                }
-
-                tags = normalizedTags;
+            if (normalizedTags.length === 0 && parsed.length > 0) {
+                errors.push("tags must contain non-empty strings");
             }
+
+            tags = normalizedTags;
         }
     }
 
@@ -444,7 +442,7 @@ const validateUpdateItem = (data) => {
         isValid: errors.length === 0,
         errors,
         normalized: {
-            name: data.name.trim(),
+            name: data.name?.trim(),
             description: data.description !== undefined ? data.description.trim() : undefined,
             price,
             categoryId: data.categoryId,
@@ -469,4 +467,3 @@ const validateDeleteItem = (itemId) => {
 };
 
 module.exports = { validateCreateItem, validateGetItems, validateUpdateItem, validateDeleteItem };
-

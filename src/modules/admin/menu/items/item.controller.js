@@ -3,6 +3,7 @@ const uploadToS3 = require("../../../../utils/s3Upload");
 const generateSnowflakeId = require("../../../../utils/snowflake");
 const slugify = require("slugify");
 const { validateCreateItem, validateGetItems, validateUpdateItem, validateDeleteItem } = require("./item.validation");
+const { writeCache, invalidateItemCache } = require("../../../../middlewares/cache.middleware");
 
 const buildImageUrl = (key) => {
     if (!key) return null
@@ -77,6 +78,9 @@ const createItem = async (req, res) => {
 
         const menuItem = await MenuItem.create(payload);
 
+        // Invalidate GET cache for this admin so next GET hits DB fresh
+        await invalidateItemCache(adminId);
+
         return res.status(201).json({
             success: true,
             message: "Menu item created successfully",
@@ -139,7 +143,7 @@ const getItems = async (req, res) => {
 
         if (categoryId) filter.categoryId = categoryId;
         if (type) filter.type = type;
-        if (isAvailable !== undefined) filter.isAvailable = isAvailable === "true";
+        if (isAvailable !== undefined) filter.isAvailable = isAvailable;
 
         // Full-text search on name + description
         if (search) {
@@ -162,7 +166,7 @@ const getItems = async (req, res) => {
             MenuItem.countDocuments(filter),
         ]);
 
-        return res.status(200).json({
+        const responsePayload = {
             success: true,
             data: items,
             pagination: {
@@ -171,7 +175,12 @@ const getItems = async (req, res) => {
                 limit,
                 totalPages: Math.ceil(total / limit),
             },
-        });
+        };
+
+        // Save result to Redis for next request
+        await writeCache(req.cacheMeta, responsePayload);
+
+        return res.status(200).json(responsePayload);
     } catch (error) {
         console.error("getItems failed:", error);
         return res.status(500).json({
@@ -246,6 +255,9 @@ const updateItem = async (req, res) => {
 
         await menuItem.save();
 
+        // Invalidate GET cache so next GET reflects the update
+        await invalidateItemCache(adminId);
+
         return res.status(200).json({
             success: true,
             message: "Menu item updated successfully",
@@ -300,6 +312,9 @@ const deleteItem = async (req, res) => {
 
         menuItem.isDeleted = true;
         await menuItem.save();
+
+        // Invalidate GET cache so deleted item is no longer returned
+        await invalidateItemCache(adminId);
 
         return res.status(200).json({
             success: true,

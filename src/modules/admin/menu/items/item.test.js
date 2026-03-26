@@ -40,8 +40,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
+    try {
+        await mongoose.disconnect();
+    } finally {
+        await mongoServer.stop();
+    }
 });
 
 beforeEach(async () => {
@@ -112,4 +115,3 @@ test("create, update, delete, and get respects isDeleted", async () => {
     expect(list3.status).toBe(200);
     expect(list3.body.data.length).toBe(0);
 });
-

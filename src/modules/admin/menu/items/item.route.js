@@ -6,6 +6,7 @@ const { createItem, getItems, updateItem, deleteItem } = require("./item.control
 const upload = require("../../../../utils/uploadImage");
 const { authenticate } = require("../../../../middlewares/auth.middleware");
 const { authorize } = require("../../../../middlewares/role.middleware");
+const { readCache } = require("../../../../middlewares/cache.middleware");
 
 const handleMulterError = (err, req, res, next) => {
     if (err instanceof multer.MulterError) {
@@ -32,7 +33,13 @@ router.post(
     createItem
 );
 
-router.get("/menu/item/get", authenticate, authorize("ADMIN"), getItems);
+router.get(
+    "/menu/item/get",
+    authenticate,
+    authorize("ADMIN"),
+    readCache("menu-items", 60),
+    getItems
+);
 
 router.patch(
     "/menu/item/update/:id",
